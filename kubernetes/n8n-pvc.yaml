@@ -1,11 +1,13 @@
-kind: PersistentVolumeClaim
 apiVersion: v1
+kind: PersistentVolumeClaim
 metadata:
-  name: postgresql-pv
+  labels:
+    service: n8n-pvc
+  name: n8n-pvc
   namespace: n8n
 spec:
   accessModes:
     - ReadWriteOnce
   resources:
     requests:
-      storage: 300Gi
+      storage: 2Gi
