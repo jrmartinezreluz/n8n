@@ -20,7 +20,10 @@ spec:
       initContainers:
         - name: wait-for-postgres
           image: busybox:1.36
-          command: ['sh', '-c', 'until nc -z postgres 5432; do echo waiting for postgres; sleep 2; done;']
+          command:
+            - sh
+            - -c
+            - until nc -z postgres 5432; do echo waiting for postgres; sleep 2; done;
         - name: volume-permissions
           image: busybox:1.36
           command: ["sh", "-c", "chown 1000:1000 /data"]
@@ -30,18 +33,14 @@ spec:
       containers:
         - name: n8n
           image: n8nio/n8n:1.108.2
-          command: ["n8n"]
           ports:
             - containerPort: 5678
+          envFrom:
+            - configMapRef:
+                name: n8n-config
+            - secretRef:
+                name: n8n-secret
           env:
-            - name: DB_TYPE
-              value: postgresdb
-            - name: DB_POSTGRESDB_HOST
-              value: postgres
-            - name: DB_POSTGRESDB_PORT
-              value: "5432"
-            - name: DB_POSTGRESDB_DATABASE
-              value: n8n
             - name: DB_POSTGRESDB_USER
               valueFrom:
                 secretKeyRef:
@@ -52,47 +51,27 @@ spec:
                 secretKeyRef:
                   name: postgres-secret
                   key: POSTGRES_PASSWORD
-            - name: N8N_PROTOCOL
-              value: https
-            - name: N8N_PORT
-              value: "5678"
-            - name: N8N_HOST
-              value: n8n-dev.arkhadia.com
-            - name: N8N_EDITOR_BASE_URL
-              value: https://n8n-dev.arkhadia.com
-            - name: WEBHOOK_URL
-              value: https://n8n-dev.arkhadia.com/
-            - name: N8N_ENFORCE_SETTINGS_FILE_PERMISSIONS
-              value: "true"
-            - name: QUEUE_HEALTH_CHECK_ACTIVE
-              value: "true"
-            - name: N8N_METRICS
-              value: "true"
-            - name: N8N_RUNNERS_ENABLED
-              value: "true"
           readinessProbe:
             httpGet:
-              path: /
+              path: /healthz/readiness
               port: 5678
-            initialDelaySeconds: 20
+            initialDelaySeconds: 30
             periodSeconds: 10
-            failureThreshold: 3
-            successThreshold: 1
+            failureThreshold: 6
           livenessProbe:
             httpGet:
-              path: /metrics
+              path: /healthz
               port: 5678
             initialDelaySeconds: 60
             periodSeconds: 30
             failureThreshold: 5
-            successThreshold: 1
           resources:
             requests:
               cpu: "250m"
               memory: "512Mi"
             limits:
-              cpu: "500m"
-              memory: "1Gi"
+              cpu: "1000m"
+              memory: "2Gi"
           volumeMounts:
             - name: n8n-pvc
               mountPath: /home/node/.n8n

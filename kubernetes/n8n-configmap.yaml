@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: n8n-config
+  namespace: n8n
+data:
+  DB_TYPE: postgresdb
+  DB_POSTGRESDB_HOST: postgres
+  DB_POSTGRESDB_PORT: "5432"
+  DB_POSTGRESDB_DATABASE: n8n
+  N8N_PROTOCOL: https
+  N8N_PORT: "5678"
+  N8N_HOST: n8n-dev.arkhadia.com
+  N8N_EDITOR_BASE_URL: https://n8n-dev.arkhadia.com
+  WEBHOOK_URL: https://n8n-dev.arkhadia.com/
+  N8N_ENFORCE_SETTINGS_FILE_PERMISSIONS: "true"
+  QUEUE_HEALTH_CHECK_ACTIVE: "true"
+  N8N_METRICS: "true"
+  N8N_RUNNERS_ENABLED: "true"

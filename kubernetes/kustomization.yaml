@@ -5,13 +5,22 @@ namespace: n8n
 
 resources:
   - n8n-namespace.yaml
+  - n8n-configmap.yaml
   - n8n-deployment.yaml
   - n8n-service.yaml
   - n8n-pvc.yaml
   - postgres-deployment.yaml
   - postgres-service.yaml
   - postgres-pvc.yaml
-  - postgres-secret.yaml
-  - postgres-configmap.yaml
   - n8n-ingress.yaml
-  - n8n-secret.yaml
+
+secretGenerator:
+  - name: postgres-secret
+    envs:
+      - secrets/postgres.env
+  - name: n8n-secret
+    envs:
+      - secrets/n8n.env
+
+generatorOptions:
+  disableNameSuffixHash: true

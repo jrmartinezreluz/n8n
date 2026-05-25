@@ -1,0 +1,10 @@
+# Local secrets (copy from *.example)
+kubernetes/secrets/postgres.env
+kubernetes/secrets/n8n.env
+
+# Legacy secret manifests if created locally
+kubernetes/postgres-secret.yaml
+kubernetes/n8n-secret.yaml
+
+.env
+*.log
